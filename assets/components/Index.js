@@ -1,76 +1,92 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Rating, Spinner } from 'flowbite-react';
+import { Button, Checkbox, Rating, Spinner } from 'flowbite-react';
 
 const Index = props => {
-    const [movies, setMovies] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sortByRating, setSortByRating] = useState(false);
+  const [sortByReleaseDate, setSortByReleaseDate] = useState(false);
 
-    const fetchMovies = () => {
-        setLoading(true);
+  const fetchMovies = () => {
+    setLoading(true);
 
-        return fetch('/api/movies')
-            .then(response => response.json())
-            .then(data => {
-                setMovies(data.movies);
-                setLoading(false);
-            });
+    let url = '/api/movies';
+    if (sortByRating) {
+      url += '?sort_by_rating=true';
+    }
+    if (sortByReleaseDate) {
+      url += (sortByRating ? '&' : '?') + 'sort_by_release_date=true';
     }
 
-    useEffect(() => {
-        fetchMovies();
-    }, []);
+    return fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        setMovies(data.movies);
+        setLoading(false);
+      });
+  }
 
-    return (
-        <Layout>
-          <Heading />
+  useEffect(() => {
+    fetchMovies();
+  }, [sortByRating, sortByReleaseDate]);
 
-          <MovieList loading={loading}>
-            {movies.map((item, key) => (
-              <MovieItem key={key} {...item} />
-            ))}
-          </MovieList>
-        </Layout>
-    );
+  return (
+    <Layout>
+      <Heading />
+
+      <div className="flex justify-end mb-4">
+        <Checkbox label="Sort by rating" checked={sortByRating} onChange={() => setSortByRating(!sortByRating)} className="mr-4" />
+
+        <Checkbox label="Sort by release date" checked={sortByReleaseDate} onChange={() => setSortByReleaseDate(!sortByReleaseDate)} />
+      </div>
+
+      <MovieList loading={loading}>
+        {movies.map((item, key) => (
+          <MovieItem key={key} {...item} />
+        ))}
+      </MovieList>
+    </Layout>
+  );
 };
 
 const Layout = props => {
-    return (
-        <section className="bg-white dark:bg-gray-900">
-          <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-            {props.children}
-          </div>
-        </section>
-    );
+  return (
+    <section className="bg-white dark:bg-gray-900">
+      <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+        {props.children}
+      </div>
+    </section>
+  );
 };
 
 const Heading = props => {
-    return (
-        <div className="mx-auto max-w-screen-sm text-center mb-8 lg:mb-16">
-          <h1 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-            Movie Collection
-          </h1>
+  return (
+    <div className="mx-auto max-w-screen-sm text-center mb-8 lg:mb-16">
+      <h1 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+        Movie Collection
+      </h1>
 
-          <p className="font-light text-gray-500 lg:mb-16 sm:text-xl dark:text-gray-400">
-            Explore the whole collection of movies
-          </p>
-        </div>
-    );
+      <p className="font-light text-gray-500 lg:mb-16 sm:text-xl dark:text-gray-400">
+        Explore the whole collection of movies
+      </p>
+    </div>
+  );
 };
 
 const MovieList = props => {
-    if (props.loading) {
-        return (
-            <div className="text-center">
-              <Spinner size="xl" />
-            </div>
-        );
-    }
-
+  if (props.loading) {
     return (
-        <div className="grid gap-4 md:gap-y-8 xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3">
-          {props.children}
-        </div>
+      <div className="text-center">
+        <Spinner size="xl" />
+      </div>
     );
+  }
+
+  return (
+    <div className="grid gap-4 md:gap-y-8 xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3">
+      {props.children}
+    </div>
+  );
 };
 
 const MovieItem = props => {
