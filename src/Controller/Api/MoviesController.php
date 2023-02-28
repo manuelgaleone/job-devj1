@@ -23,9 +23,9 @@ class MoviesController extends AbstractController
         if ($sortByRating) {
             $qb->orderBy("m.rating", "DESC");
         } else if ($sortByReleaseDate) {
-            $qb->orderBy("m.release_date", "DESC");
+            $qb->orderBy("m.year", "DESC");
         } else {
-            $qb->orderBy("m.release_date", "DESC");
+            $qb->orderBy("m.year", "DESC");
         }
 
         $rows = $qb
