@@ -15,10 +15,19 @@ class MoviesController extends AbstractController
     {
         $sortByRating = $request->query->get('sort_by_rating') === 'true';
         $sortByReleaseDate = $request->query->get('sort_by_release_date') === 'true';
+        $genreId = $request->query->get('genre_id');
+
 
         $qb = $db->createQueryBuilder()
             ->select("m.*")
             ->from("movies", "m");
+
+        if ($genreId) {
+            $qb
+                ->join("m", "movies_genres", "mg", "m.id = mg.movie_id")
+                ->where("mg.genre_id = :genreId")
+                ->setParameter("genreId", $genreId);
+        }
 
         if ($sortByRating) {
             $qb->orderBy("m.rating", "DESC");

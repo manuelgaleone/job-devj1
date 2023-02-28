@@ -21,14 +21,20 @@ const Index = props => {
     setLoading(true);
   
     let url = '/api/movies';
+    const params = new URLSearchParams();
+  
     if (sortByRating) {
-      url += '?sort_by_rating=true';
+      params.append('sort_by_rating', 'true');
     }
     if (sortByReleaseDate) {
-      url += (sortByRating ? '&' : '?') + 'sort_by_release_date=true';
+      params.append('sort_by_release_date', 'true');
     }
     if (selectedGenres.length > 0) {
-      url += (sortByRating || sortByReleaseDate ? '&' : '?') + 'genres=' + selectedGenres.join(',');
+      selectedGenres.forEach(genreId => params.append('genre_id', genreId));
+    }
+  
+    if (params.toString()) {
+      url += '?' + params.toString();
     }
   
     return fetch(url)
