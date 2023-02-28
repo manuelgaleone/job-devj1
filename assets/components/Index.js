@@ -36,19 +36,31 @@ const Index = props => {
   
       <div className="flex justify-center mb-4">
         <div className="flex items-center mr-4">
-          <Checkbox
+          <input
+            type="radio"
+            id="sort_by_rating"
+            name="sort_by"
             checked={sortByRating}
-            onChange={() => setSortByRating(!sortByRating)}
+            onChange={() => {
+              setSortByRating(true);
+              setSortByReleaseDate(false);
+            }}
           />
-          <span className="ml-2">Sort by rating</span>
+          <label htmlFor="sort_by_rating" className="ml-2">Sort by rating</label>
         </div>
-  
+
         <div className="flex items-center">
-          <Checkbox
+          <input
+            type="radio"
+            id="sort_by_release_date"
+            name="sort_by"
             checked={sortByReleaseDate}
-            onChange={() => setSortByReleaseDate(!sortByReleaseDate)}
+            onChange={() => {
+              setSortByReleaseDate(true);
+              setSortByRating(false);
+            }}
           />
-          <span className="ml-2">Sort by release date</span>
+          <label htmlFor="sort_by_release_date" className="ml-2">Sort by release date</label>
         </div>
       </div>
   
