@@ -33,13 +33,25 @@ const Index = props => {
   return (
     <Layout>
       <Heading />
-
-      <div className="flex justify-end mb-4">
-        <Checkbox label="Sort by rating" checked={sortByRating} onChange={() => setSortByRating(!sortByRating)} className="mr-4" />
-
-        <Checkbox label="Sort by release date" checked={sortByReleaseDate} onChange={() => setSortByReleaseDate(!sortByReleaseDate)} />
+  
+      <div className="flex justify-center mb-4">
+        <div className="flex items-center mr-4">
+          <Checkbox
+            checked={sortByRating}
+            onChange={() => setSortByRating(!sortByRating)}
+          />
+          <span className="ml-2">Sort by rating</span>
+        </div>
+  
+        <div className="flex items-center">
+          <Checkbox
+            checked={sortByReleaseDate}
+            onChange={() => setSortByReleaseDate(!sortByReleaseDate)}
+          />
+          <span className="ml-2">Sort by release date</span>
+        </div>
       </div>
-
+  
       <MovieList loading={loading}>
         {movies.map((item, key) => (
           <MovieItem key={key} {...item} />
