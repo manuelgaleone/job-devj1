@@ -6,10 +6,20 @@ const Index = props => {
   const [loading, setLoading] = useState(true);
   const [sortByRating, setSortByRating] = useState(false);
   const [sortByReleaseDate, setSortByReleaseDate] = useState(false);
-
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [genres, setGenres] = useState([]);
+  
+  const fetchGenres = () => {
+    return fetch('/api/genres')
+      .then(response => response.json())
+      .then(data => {
+        setGenres(data.genres);
+      });
+  }
+  
   const fetchMovies = () => {
     setLoading(true);
-
+  
     let url = '/api/movies';
     if (sortByRating) {
       url += '?sort_by_rating=true';
@@ -17,7 +27,10 @@ const Index = props => {
     if (sortByReleaseDate) {
       url += (sortByRating ? '&' : '?') + 'sort_by_release_date=true';
     }
-
+    if (selectedGenres.length > 0) {
+      url += (sortByRating || sortByReleaseDate ? '&' : '?') + 'genres=' + selectedGenres.join(',');
+    }
+  
     return fetch(url)
       .then(response => response.json())
       .then(data => {
@@ -25,11 +38,12 @@ const Index = props => {
         setLoading(false);
       });
   }
-
+  
   useEffect(() => {
+    fetchGenres();
     fetchMovies();
-  }, [sortByRating, sortByReleaseDate]);
-
+  }, [sortByRating, sortByReleaseDate, selectedGenres]);
+  
   return (
     <Layout>
       <Heading />
@@ -48,8 +62,8 @@ const Index = props => {
           />
           <label htmlFor="sort_by_rating" className="ml-2">Sort by rating</label>
         </div>
-
-        <div className="flex items-center">
+  
+        <div className="flex items-center mr-4">
           <input
             type="radio"
             id="sort_by_release_date"
@@ -61,6 +75,18 @@ const Index = props => {
             }}
           />
           <label htmlFor="sort_by_release_date" className="ml-2">Sort by release date</label>
+        </div>
+  
+        <div>
+          <select
+            multiple
+            value={selectedGenres}
+            onChange={event => setSelectedGenres(Array.from(event.target.selectedOptions, option => option.value))}
+          >
+            {genres.map(genre => (
+              <option key={genre.id} value={genre.id}>{genre.value}</option>
+            ))}
+          </select>
         </div>
       </div>
   
